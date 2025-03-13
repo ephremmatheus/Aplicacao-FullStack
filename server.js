@@ -1,6 +1,8 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client'
 import { ObjectId } from 'mongodb';
+import cors from 'cors';
+
 
 const prisma = new PrismaClient()
 
@@ -10,6 +12,7 @@ app.set('view engine', 'ejs')
 
 
 app.use(express.urlencoded({extended: true}))
+app.use(cors())
 app.use(express.json())
 
 app.post('/usuarios', async function(req, res) {
@@ -24,9 +27,11 @@ app.post('/usuarios', async function(req, res) {
         res.status(201).send('Usuário criado!')
     } catch(e){
         if(e.code == 'P2002'){
-            res.status(400).send('Email já existe')
+            res.send('Email já existe')
+            return
         }
-        res.status(500).send('Erro ao criar usuário, tente novamente mais tarde.')
+        res.send('Não foi possível, por favor tente novamente mais tarde.')
+        return
     }    
 })
 
@@ -69,7 +74,7 @@ app.delete('/usuarios/:id', async function(req, res) {
     res.status(200).send('Usuário deletado!')
 })
 
-// app.listen(3000, () => {
-//     console.log('http://localhost:3000')
-//     console.log('escutando a 3000')
-// })
+app.listen(3000, () => {
+    console.log('http://localhost:3000')
+    console.log('escutando a 3000')
+})
